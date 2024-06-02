@@ -31,4 +31,13 @@ contract FundMeTest is Test {
         console.log(fundMe.getVersion());
         assertEq(fundMe.getVersion(), 4);
     }
+
+    function test_FundFailsWithoutEnoughETH() public {
+        vm.expectRevert();
+        fundMe.fund();
+    }
+
+    function test_UpdatesPublicDataStructure() public {
+        fundMe.fund{value: 10e18}();
+    }
 }
