@@ -95,7 +95,7 @@ contract FundMe {
     }
 
     /**
-     * Getter Functions
+     * Getter Function
      */
 
     /**
