@@ -8,12 +8,17 @@ import {DeployFundMe} from "../script/DeployFundMe.s.sol";
 
 contract FundMeTest is Test {
     FundMe fundMe;
+    address user = makeAddr("user");
+    uint256 constant SEND_VALUE = 0.1 ether;
+    uint256 constant STARTING_BALANCE = 10 ether;
     function setUp() external {
         // FundMe is deployed by DeployFundMe.run()
         // owner will be msg.sender again
         // fundMe = new FundMe(0xd30e2101a97dcbAeBCBC04F14C3f624E67A35165);
         DeployFundMe deployFundMe = new DeployFundMe();
         fundMe = deployFundMe.run();
+        // give user some money for the tests
+        vm.deal(user, STARTING_BALANCE);
     }
 
     function test_MinDollarIsFive() public view {
@@ -22,9 +27,9 @@ contract FundMeTest is Test {
 
     //msg.sender is not the owner
     function test_OwnerIsTheSender() public view {
-        console.log(fundMe.i_owner());
+        console.log(fundMe.getOwner());
         console.log(msg.sender);
-        assertEq(fundMe.i_owner(), msg.sender);
+        assertEq(fundMe.getOwner(), msg.sender);
     }
 
     function test_PriceFeedVersion() public view {
@@ -38,6 +43,11 @@ contract FundMeTest is Test {
     }
 
     function test_UpdatesPublicDataStructure() public {
-        fundMe.fund{value: 10e18}();
+        vm.prank(user);
+        // will be sent by user (make sure user has money)
+        fundMe.fund{value: SEND_VALUE}();
+
+        uint256 amountFunded = fundMe.getAddressToAmountFunded(user);
+        assertEq(amountFunded, SEND_VALUE);
     }
 }
