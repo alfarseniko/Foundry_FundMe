@@ -1,1 +1,1 @@
-A project which involves local committe system using ruppee to ETH conversion.
+A project which involves local committe system using ruppee to ETH conversion. But apparently there is no ETH/PKR Oracle
