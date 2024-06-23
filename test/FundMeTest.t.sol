@@ -11,6 +11,7 @@ contract FundMeTest is Test {
     address user = makeAddr("user");
     uint256 constant SEND_VALUE = 0.1 ether;
     uint256 constant STARTING_BALANCE = 10 ether;
+    uint256 constant GAS_PRICE = 1;
 
     modifier funded() {
         vm.prank(user);
@@ -79,8 +80,14 @@ contract FundMeTest is Test {
         uint256 startingFundMeBalance = address(fundMe).balance;
 
         // Act
+        uint256 gasStart = gasleft();
+        vm.txGasPrice(GAS_PRICE);
         vm.prank(fundMe.getOwner());
         fundMe.withdraw();
+        uint256 gasLeft = gasleft();
+        uint256 gasUsed = (gasStart - gasLeft) * GAS_PRICE;
+        console.log(gasUsed);
+        // if gas was used why didnt the balance change
 
         // Assert
         uint256 endingOwnerBalance = fundMe.getOwner().balance;
